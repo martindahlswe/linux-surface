@@ -968,22 +968,11 @@ index 000000000000..8a07aaa006bd
 +MODULE_DESCRIPTION("Sony IMX681 CMOS Image Sensor Driver");
 +MODULE_AUTHOR("Andre Gilerson <andre.gilerson@gmail.com>");
 +MODULE_LICENSE("GPL");
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: surface-fixes <you@example.com>
-Date:   2026-03-03
-Subject: [PATCH] media: i2c: ov13858: fix for kernel 6.18 (get_selection + probe)
-
-Add get_selection support and update ov13858_probe for kernel 6.18.
-
----
- drivers/media/i2c/ov13858.c | 37 +++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
 diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
-index 970b224cb466..abcdef123456 100644
+index 970b224cb466..85eed707ebdb 100644
 --- a/drivers/media/i2c/ov13858.c
 +++ b/drivers/media/i2c/ov13858.c
-@@ -1654,10 +1654,41 @@ static const struct v4l2_subdev_video_ops ov13858_video_ops = {
+@@ -1654,10 +1654,31 @@ static const struct v4l2_subdev_video_ops ov13858_video_ops = {
  	.s_stream = ov13858_set_stream,
  };
  
@@ -1015,7 +1004,7 @@ index 970b224cb466..abcdef123456 100644
  	.enum_frame_size = ov13858_enum_frame_size,
  };
  
-@@ -1795,11 +1826,17 @@ static int ov13858_probe(struct i2c_client *client)
+@@ -1795,7 +1816,10 @@ static int ov13858_probe(struct i2c_client *client)
  	u32 val = 0;
  
  	device_property_read_u32(&client->dev, "clock-frequency", &val);
@@ -1030,7 +1019,6 @@ index 970b224cb466..abcdef123456 100644
  
  	ov13858 = devm_kzalloc(&client->dev, sizeof(*ov13858), GFP_KERNEL);
  	if (!ov13858)
- 		return -ENOMEM;
 diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
 index ac637207b644..ebc1cf3af390 100644
 --- a/drivers/media/pci/intel/ipu-bridge.c
