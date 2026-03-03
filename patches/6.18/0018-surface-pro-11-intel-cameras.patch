@@ -1015,21 +1015,22 @@ index 970b224cb466..abcdef123456 100644
  	.enum_frame_size = ov13858_enum_frame_size,
  };
  
-@@ -1795,9 +1826,20 @@ static int ov13858_probe(struct i2c_client *client)
+@@ -1795,11 +1826,17 @@ static int ov13858_probe(struct i2c_client *client)
  	u32 val = 0;
  
  	device_property_read_u32(&client->dev, "clock-frequency", &val);
--	dev_info(&client->dev, "Clock frequency read: %u (expected 19200000)\n", val);
+-	if (val != 19200000)
+-		return -EINVAL;
 +	if (val == 0)
 +		return dev_err_probe(&client->dev, -EPROBE_DEFER,
 +			"clock-frequency not yet available, deferring\n");
 +	if (val != 19200000)
 +		return dev_err_probe(&client->dev, -EINVAL,
 +			"unexpected clock-frequency %u (expected 19200000)\n", val);
-+
-+	ov13858 = devm_kzalloc(&client->dev, sizeof(*ov13858), GFP_KERNEL);
-+	if (!ov13858)
-+		return -ENOMEM;
+ 
+ 	ov13858 = devm_kzalloc(&client->dev, sizeof(*ov13858), GFP_KERNEL);
+ 	if (!ov13858)
+ 		return -ENOMEM;
 diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
 index ac637207b644..ebc1cf3af390 100644
 --- a/drivers/media/pci/intel/ipu-bridge.c
