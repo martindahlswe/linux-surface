@@ -1,11 +1,14 @@
 From de9eb5cc5351f5a268eeb26bc8304862fd98b364 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Gilerson?= <andre.gilerson@gmail.com>
 Date: Wed, 25 Feb 2026 20:13:23 +0100
-Subject: [PATCH] On the Microsoft Surface Pro 11 Business (Intel Lunar Lake),
- the EFI ResetSystem call with EFI_RESET_SHUTDOWN fails to power off the
- system when PCI shutdown callbacks have run for certain devices. Instead of
- shutting down, the call returns and the system stays on, draining the battery
- completely overnight.
+Subject: [PATCH] PCI: quirks: Add shutdown quirk for Surface Pro 11 Intel
+ (Lunar Lake)
+
+On the Microsoft Surface Pro 11 Business (Intel Lunar Lake),
+the EFI ResetSystem call with EFI_RESET_SHUTDOWN fails to power off the
+system when PCI shutdown callbacks have run for certain devices. Instead of
+shutting down, the call returns and the system stays on, draining the battery
+completely overnight.
 
 This is the same class of firmware bug seen on the Surface Pro 9 and
 Surface Laptop 5 (Alder Lake), where Thunderbolt and GPU driver shutdown
@@ -19,13 +22,12 @@ Register PCI fixups for the five Lunar Lake devices who trigger the bug:
 - 8086:64a0  GPU (Intel Arc Graphics 130V/140V)
 
 Gate the fixups through by a DMI Table matching the Surface Pro 11 Intel
-variant (vendor + product name + SKU) so they to do not affect other systems.
+variant (vendor + product name + SKU) so they do not affect other systems.
 ---
  drivers/pci/quirks.c | 15 +++++++++++++++
  1 file changed, 15 insertions(+)
 
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 104fba45ac76..a82748aac37c 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -6358,6 +6358,15 @@ static const struct dmi_system_id no_shutdown_dmi_table[] = {
@@ -33,14 +35,14 @@ index 104fba45ac76..a82748aac37c 100644
  		},
  	},
 +	{
-+                .ident = "Microsoft Surface Pro 11th Edition with Intel",
-+                .matches = {
-+                       	DMI_MATCH(DMI_SYS_VENDOR, "Microsoft Corporation"),
-+                       	DMI_MATCH(DMI_PRODUCT_NAME, "Surface Pro"),
-+                	DMI_MATCH(DMI_PRODUCT_SKU,
-+                       		"Surface_Pro_11th_Edition_With_Intel"),
-+               },
-+       },
++		.ident = "Microsoft Surface Pro 11th Edition with Intel",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Microsoft Corporation"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Surface Pro"),
++			DMI_MATCH(DMI_PRODUCT_SKU,
++				"Surface_Pro_11th_Edition_With_Intel"),
++		},
++	},
  	{}
  };
  
@@ -56,4 +58,3 @@ index 104fba45ac76..a82748aac37c 100644
 +
 -- 
 2.51.0
-

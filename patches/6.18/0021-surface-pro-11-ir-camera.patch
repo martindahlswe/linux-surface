@@ -2897,21 +2897,7 @@ index ebc1cf3af390..bbf84e141635 100644
  	/* Sony IMX681 - Surface Pro 11 */
  	IPU_SENSOR_CONFIG("SONY0681", 1, 969600000),
  	/* Omnivision OV2740 */
-diff --git a/drivers/platform/x86/intel/int3472/common.c b/drivers/platform/x86/intel/int3472/common.c
-index 6dc38d5cbd0b..991947614f1c 100644
---- a/drivers/platform/x86/intel/int3472/common.c
-+++ b/drivers/platform/x86/intel/int3472/common.c
-@@ -69,7 +69,7 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
- 		return -ENODEV;
- 	}
- 
--	dev_dbg(dev, "Sensor name %s\n", acpi_dev_name(sensor));
-+	dev_info(dev, "Sensor ACPI name %s\n", acpi_dev_name(sensor));
- 
- 	*name_ret = devm_kasprintf(dev, GFP_KERNEL, I2C_DEV_NAME_FORMAT,
- 				   acpi_dev_name(sensor));
 diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index b559112ee763..fcb00030e385 100644
 --- a/drivers/platform/x86/intel/int3472/discrete.c
 +++ b/drivers/platform/x86/intel/int3472/discrete.c
 @@ -366,7 +366,16 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
@@ -2923,9 +2909,7 @@ index b559112ee763..fcb00030e385 100644
 +		    dev_info(int3472->dev, "GPIO type 0x10 detected on pin 0x%02x\n",
 +			     agpio->pin_table[0]);
 +		    dev_info(int3472->dev, "  con_id=%s, flags=0x%lx\n", con_id, gpio_flags);
-+		    ret = skl_int3472_register_regulator(int3472, gpio,
-+			 GPIO_REGULATOR_ENABLE_TIME,
-+			 con_id, NULL);
++		    ret = skl_int3472_register_regulator(int3472, agpio, con_id);
 +		    dev_info(int3472->dev, "  register_regulator returned: %d\n", ret);
 +		    if (ret)
 +			dev_err(int3472->dev, "Failed to register type 0x10: %d\n", ret);

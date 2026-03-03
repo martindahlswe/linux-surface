@@ -1,7 +1,8 @@
 From 8f3e70958ba794ed83c0f1c20a82257c07b2453c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Gilerson?= <andre.gilerson@gmail.com>
 Date: Sat, 28 Feb 2026 08:34:13 +0100
-Subject: [PATCH] Add lid wake support for Surface Pro 11 Intel.
+Subject: [PATCH] platform/surface: Add lid wake support for Surface Pro 11
+ Intel.
 
 Add the lid GPE (0x2E) used by the Surface Pro 11 with Intel Lunar Lake
 processor. The GPE was identified from the DSDT _L2E handler which reads
@@ -43,4 +44,3 @@ index b4496db79f39..d7844e26f4fe 100644
  
 -- 
 2.51.0
-
